@@ -2,16 +2,17 @@
 
 ## Description
 This module is a set of OOP methods to read a config file and provide access
-to its sections, keywords and values.  A section is a grouping of keyword =
-values.  A section begins at the beginning of a line and the keywords for that
+to its sections, keywords and values.  A section is a grouping of
+   ***keyword = values***.
+A section begins at the beginning of a line and the keywords for that
 section are indented.  A keyword can point to a scalar value, an array of
 values, or a associative array of values.
 
 Lines can be continued across multiple lines by ending a line with a
-backslash.  Values are separated by commas.  To have a comma or a backslash as
-part of the data, escape them with a backslash.
+backslash.  Values are separated by commas.
+To have a comma or a backslash as part of the data, escape them with a backslash.
 
-Other config files can be included, to any depth, via a #include line.
+Other config files can be included, to any depth, via a ***#include*** line.
 
 Comments begin with a '#' character (if it isn't a #include) and blank lines
 are ignored.
