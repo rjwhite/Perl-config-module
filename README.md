@@ -41,8 +41,8 @@ To see documentation, do a perldoc Moxad::Config.pm
                                value with spaces on the end   '
         keyword4 (array)    = val1, val2, 'val 3   ', val4
         keyword5 (hash)     = v1 = this, \
-                                v2 = " that ", \
-                                v3 = fooey
+                              v2 = " that ", \
+                              v3 = fooey
 
     #include some/other/file.conf
 
@@ -52,4 +52,4 @@ To see documentation, do a perldoc Moxad::Config.pm
         something           = 'This has a comma here \, in the data'
 
     section-name1:
-    more-stuff          = more stuff for section-name1
+        more-stuff          = more stuff for section-name1
