@@ -19,17 +19,17 @@ are ignored.
 To preserve whitespace around values, use matching single or double quotes
 around a value.
 
-To see documentation, do a perldoc Moxad::Config.pm
+To see documentation, do a ***perldoc Moxad::Config.pm***
 
 ### Class methods
 - new()
 - set_debug()
 
 ### Instance methods
-- get_sections
-- get_keywords
-- get_type
-- get_values
+- get_sections()
+- get_keywords()
+- get_type()
+- get_values()
 
 
 ## Config file example
