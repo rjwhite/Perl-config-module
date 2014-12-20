@@ -4,11 +4,19 @@ use strict ;
 use warnings ;
 use Moxad::Config ;
 
-my $file = "test.conf" ;
+my $file        = "test.conf" ;
+my $defs_file   = "test-defs.conf" ;
 
-Moxad::Config->set_debug(1) ;
+my $version = $Moxad::Config::VERSION ;
+print "Version = $version\n" ;
 
-my $cfg1 = Moxad::Config->new( $file ) ;
+Moxad::Config->set_debug(0) ;
+
+my $cfg1 = Moxad::Config->new( 
+    $file,
+    $defs_file,
+    { 'poo' => 'crap', 'AcceptUndefinedKeywords' => 'foo' } ) ;
+
 if ( $cfg1->errors() ) {
     my @errors = $cfg1->errors() ;
     foreach my $error ( @errors ) {
