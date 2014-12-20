@@ -1,0 +1,6 @@
+0.0.1       Dec, 2014
+    - initial version
+
+0.0.2       Dec 20, 2014
+    - added support for definitions file
+    - lots of refactoring
