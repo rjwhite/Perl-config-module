@@ -1119,8 +1119,8 @@ over-ride the other.
 
     # this keyword2 will apply to all sections
     keyword                 = keyword2
-        type                = hash
-        separator           = ,
+    type                    = hash
+    separator               = ,
 
 =head1 Class methods
 
