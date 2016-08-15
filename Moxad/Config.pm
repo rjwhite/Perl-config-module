@@ -151,7 +151,7 @@ my $debug_value   = 0 ;
 
 use Exporter ;
 our @EXPORT = () ;
-our $ISA = qw( Exporter ) ;
+our @ISA = qw( Exporter ) ;
 
 
 # class method to create a new instance
