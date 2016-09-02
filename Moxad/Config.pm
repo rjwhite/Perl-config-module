@@ -35,7 +35,7 @@
 # - can (single or double) quote values to maintain whitespace.
 # - multiple values use a comma as a separator by default.
 # - you can provide separators in your values by escaping them with a backslash.
-#   ie:  keyword = 'This has a comma here \, as part of this sentance'
+#   ie:  keyword = 'This has a comma here \, as part of this sentence'
 # - to get a backslash in your values, escape it with another backslash.
 #
 # A optional definitions file can be provided so that a different
@@ -119,7 +119,7 @@ package Moxad::Config ;
 use strict ;
 use warnings ;
 use Readonly ;
-use version ; our $VERSION = qv('0.0.2') ;
+use version ; our $VERSION = qv('0.0.3') ;
 
 Readonly my $ERRORS                     => "errors" ;
 Readonly my $SECTIONS                   => "sections" ;
@@ -231,6 +231,27 @@ sub errors {
         die( "errors() is a instance method, not a class method\n" ) ;
     }
     return( @{$self->{ $ERRORS }} ) ;
+}
+
+
+
+# instance method to clear error messages.
+#
+# Inputs:
+#       <none>
+# Returns:
+#   instance identifier
+# Usage:
+#       $cfg1->clear_errors() ;
+
+sub clear_errors {
+    my $self    = shift ;
+
+    if ( ! ref( $self )) {
+        die( "clear_errors() is a instance method, not a class method\n" ) ;
+    }
+    @{$self->{ $ERRORS }} = ()  ;
+    return( $self ) ;
 }
 
 
@@ -349,6 +370,7 @@ sub get_type {
 #       value if the type is a scalar
 #       array of values if the type is an array
 #       hash of values if the type is a hash
+#       undef if value not available
 # Usage:
 #       my $value  = $cfg1->get_values( $section, $keyword ) ;
 #       my @values = $cfg1->get_values( $section, $keyword ) ;
@@ -381,9 +403,9 @@ sub get_values {
 
     $type = $self->{ $VALUE_TYPES }{ $section }{ $keyword } ;
     if ( not defined( $type )) {
-        my $error = "Unknonn type for section \'$section\' keyword \'$keyword\'" ;
+        my $error = "No value found for section \'$section\' keyword \'$keyword\'" ;
         push( @$self{ $ERRORS }, $error ) ;
-        return( "" ) ;      # assume user wanted a scalar
+        return( undef ) ;
     }
 
     if ( $type eq $TYPE_SCALAR ) {
@@ -393,7 +415,9 @@ sub get_values {
     } elsif ( $type eq $TYPE_HASH ) {
         return( %{$self->{ $SECTIONS }{ $section }{ $keyword }} ) ;
     } else {
-        return( "" );       # cant happen
+        my $error = "Unknown type for section \'$section\' keyword \'$keyword\'" ;
+        push( @$self{ $ERRORS }, $error ) ;
+        return( undef ) ;       # cant happen
     }
 }
 
@@ -1152,6 +1176,15 @@ over-ride the other.
  my $value  = $cfg1->get_values( $section, $keyword ) ; # scalar
  my @values = $cfg1->get_values( $section, $keyword ) ; # array
  my %values = $cfg1->get_values( $section, $keyword ) ; # hash
+
+=head2 errors
+
+ my $num_errs = $cfg1->errors() ;
+ my @errors   = $cfg1->errors() ;
+
+=head2 clear_errors
+
+ $cfg1->clear_errors() ;
 
 =head1 Code sample
 

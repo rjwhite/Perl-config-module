@@ -4,3 +4,14 @@
 0.0.2       Dec 20, 2014
     - added support for definitions file
     - lots of refactoring
+
+0.0.3       Sep 3, 2016
+    - get_values() now returns undef if value not found, instead of a
+      empty string since that could be a valid value
+    - refactoring, typos fixed
+    - added clear_errors() function
+    - added more perldoc info (error functions)
+    - added error routines to README.md
+    - added t subdirectory and test.t test program
+    - removed .gitignore (which contained Makefile)
+    - added 'test' target in Makefile

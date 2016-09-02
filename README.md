@@ -45,6 +45,8 @@ To see documentation, do a ***perldoc Moxad::Config.pm***
 - get_keywords()
 - get_type()
 - get_values()
+- errors()
+- clear_errors()
 
 ## Config file example
     # This is a comment
