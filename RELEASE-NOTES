@@ -15,3 +15,6 @@
     - added t subdirectory and test.t test program
     - removed .gitignore (which contained Makefile)
     - added 'test' target in Makefile
+
+0.0.3.1     Sep 5, 2016
+    - ignore lines in config file that are only whitespace

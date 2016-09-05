@@ -525,6 +525,7 @@ sub process_file {
         $line_num++ ;
         chomp( $line ) ;
         next if ( $line eq "" ) ;       # skip blank lines
+        next if ( $line =~ /^\s+$/ ) ;  # skip lines that are only whitespace
 
         if ( $line =~ /^\#include\s+(.*)\s*/ ) {
             my $ret = process_file( $self, $1 ) ;
