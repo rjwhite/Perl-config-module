@@ -119,13 +119,15 @@ package Moxad::Config ;
 use strict ;
 use warnings ;
 use Readonly ;
-use version ; our $VERSION = qv('0.0.3') ;
+use version ; our $VERSION = qv('0.0.4') ;
 
 Readonly my $ERRORS                     => "errors" ;
 Readonly my $SECTIONS                   => "sections" ;
 Readonly my $CURRENT_SECTION            => "section-name" ;
 Readonly my $VALUE_TYPES                => "value_types" ;
 Readonly my $ORDERED_SECTION_NAMES      => "section-names" ;
+Readonly my $CONFIG_FILENAME            => "file" ;
+Readonly my $DEFS_FILENAME              => "defsfile" ;
 
 # used for processing data in optional definitions file
 Readonly my $DEFS_TYPES                 => "def_type" ;
@@ -179,6 +181,7 @@ sub new {
     $instance{ $VALUE_TYPES }               = {} ;      # types of our values
     $instance{ $CURRENT_SECTION }           = "none" ;  # current section name
     $instance{ $ACCEPT_UNDEFINED_KEYWORDS } = 1 ;       # allow any keywords
+    $instance{ $CONFIG_FILENAME }           = $file ;   # allow any keywords
 
     if (( not defined( $defs_file )) or ( $defs_file eq "" )) {
         # there is no defs file
@@ -187,6 +190,7 @@ sub new {
         # there is a defs file so assume we've defined ALL valid keywords
         $instance{ $ACCEPT_UNDEFINED_KEYWORDS } = 0 ;
     }
+    $instance{ $DEFS_FILENAME } = $defs_file ;
 
     # check if we specifically allow undefined keywords
     if ( defined( $options_ref ) and ( ref( $options_ref ) eq "HASH" )) {
@@ -253,6 +257,39 @@ sub clear_errors {
     @{$self->{ $ERRORS }} = ()  ;
     return( $self ) ;
 }
+
+
+# instance method to reload the config file.  Zero everything out
+#
+# Inputs:
+#       <none>
+# Returns:
+#   instance identifier
+# Usage:
+#       $cfg1->reload() ;
+
+sub reload {
+    my $self    = shift ;
+
+    if ( ! ref( $self )) {
+        die( "reload() is a instance method, not a class method\n" ) ;
+    }
+
+    dprint( "Reloading..." ) ;
+
+    @{$self->{ $ERRORS }}                = () ;
+    @{$self->{ $ORDERED_SECTION_NAMES }} = () ;
+    %{$self->{ $SECTIONS }}              = () ;
+    %{$self->{ $VALUE_TYPES }}           = () ;
+
+    my $defs_file = $self->{ $DEFS_FILENAME } ;
+    my $file      = $self->{ $CONFIG_FILENAME } ;
+
+    my $ret = process_file( $self, $file, $defs_file ) ;
+
+    return( $self ) ;
+}
+
 
 
 # instance method to get section names
@@ -1186,6 +1223,11 @@ over-ride the other.
 =head2 clear_errors
 
  $cfg1->clear_errors() ;
+
+=head2 reload
+
+ $cfg1->reload() ;
+
 
 =head1 Code sample
 
