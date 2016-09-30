@@ -21,3 +21,9 @@
 
 0.0.4       Sep 24, 2016
     - added reload method to reload config file
+
+0.0.5       Sep 29, 2016
+    - comments in config file and definitions file can now
+      be indented.  A comment must be on a separate line unto itself
+      but can have whitespace before it
+    - README.md updated with reload()

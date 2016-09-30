@@ -119,7 +119,7 @@ package Moxad::Config ;
 use strict ;
 use warnings ;
 use Readonly ;
-use version ; our $VERSION = qv('0.0.4') ;
+use version ; our $VERSION = qv('0.0.5') ;
 
 Readonly my $ERRORS                     => "errors" ;
 Readonly my $SECTIONS                   => "sections" ;
@@ -574,13 +574,13 @@ sub process_file {
             next ;
         }
 
-        next if ( $line =~ /^\#/ ) ;    # skip comments
+        next if ( $line =~ /^\s*\#/ ) ;    # skip comments
 
         # see if this is the start of a section
         # A section name must begin with alphanumeric
 
         if ( $line =~ /^\w/ ) {
-            $line =~ s/:.*$// ;     # remove potential colon
+            $line =~ s/:\s*$// ;     # remove potential colon
             dprint( "starting a SECTION ($line) on line $line_num in $file" ) ;
             $self->{ $CURRENT_SECTION } = $line ;
             $section = $line ;      # for quick use for this file
@@ -597,7 +597,7 @@ sub process_file {
 
         # we have to be processing values (a keyword section)
 
-        $line =~ s/^\s+// ;         # strip leading whitespace
+        $line =~ s/^\s+// ;             # strip leading whitespace
 
         # see if it is a continuation line
 
@@ -621,7 +621,10 @@ sub process_file {
         # we now have everything we want on one line
         # separate out into the keyword and value(s)
 
-        if ( $line !~ /^([\w\-\(\)\s)]+)\s*=\s*(.*)$/ ) {
+        if ( $line !~ /^([\w\-\(\)\s)]+)    # keyword
+                         \s*=\s*            # =
+                         (.*)               # value
+                         $/x ) {            # end of line
             my $error = "Not a valid keyword entry on line $line_num " .
                 "in $file: \'$line\'" ;
             push( @$self{ $ERRORS }, $error ) ;
@@ -640,9 +643,14 @@ sub process_file {
         dprint("Before Type check: keyword=\'$keyword\' values=\'$values\'");
 
         # See what type of data it is: scalar, array, hash
+        # look for a data type hint:  keyword (type) = value(s)
 
         my $value_type = "$TYPE_UNKNOWN" ;   # default to unknown
-        if ( $keyword =~ /^([\w\-)]+)\s*\(\s*(.*)\s*\)\s*$/ ) {
+        if ( $keyword =~ /^
+                           ([\w\-)]+)       # keyword
+                           \s*              # whitespace
+                           \(\s*(.*)\s*\)   # (type)
+                           \s*$/x ) {       # whitespace till end of line
             $keyword = $1 ;
             my $type = $2 ;
             $type =~ tr/A-Z/a-z/ ;      # make lower case
@@ -707,6 +715,8 @@ sub process_file {
             $num_errs++ ;
             next ;
         }
+
+        # now dealing with the values...
 
         # if a user wants a backslash as part of the data, they had to
         # escape it.  Look for it and hide it for now before we look for
@@ -929,9 +939,9 @@ sub process_defs_file {
     foreach my $line ( @lines ) {
         $line_num++ ;
         chomp( $line ) ;
-        next if ( $line eq "" ) ;       # skip blank lines
+        next if ( $line eq "" ) ;           # skip blank lines
 
-        next if ( $line =~ /^\#/ ) ;    # skip comments
+        next if ( $line =~ /^\s*\#/ ) ;     # skip comments
 
         # see if it is a continuation line
 
@@ -954,7 +964,11 @@ sub process_defs_file {
 
         # we now have everything we want on one line
 
-        if ( $line !~ /^([\w\-)]+)\s*=\s*(.*)$/ ) {
+        if ( $line !~ /^
+                        ([\w\-)]+)      # keyword
+                        \s*=\s*         # =
+                        (.*)            # value
+                        $/x ) {         # end of line
             my $error = "Not a valid keyword entry on line $line_num " .
                 "in $defs_file: \'$line\'" ;
             push( @$self{ $ERRORS }, $error ) ;

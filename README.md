@@ -47,6 +47,7 @@ To see documentation, do a ***perldoc Moxad::Config.pm***
 - get_values()
 - errors()
 - clear_errors()
+- reload()
 
 ## Config file example
     # This is a comment
