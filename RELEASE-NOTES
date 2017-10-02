@@ -27,3 +27,12 @@
       be indented.  A comment must be on a separate line unto itself
       but can have whitespace before it
     - README.md updated with reload()
+
+0.0.6       Oct 1, 2017
+    - fix handling of escaped characters in reading definitions file.
+    - handle continuation lines properly when the last value on a line
+      is an escaped escape character.  ie: \\<newline> is NOT a
+      continuation line.  It is a single backslash on the end of a
+      non-continued line
+    - rearranged some debug statements to see values properly after
+      handling leading and trailing whitespace and quoting of values

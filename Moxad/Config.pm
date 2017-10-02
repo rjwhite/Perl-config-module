@@ -119,7 +119,7 @@ package Moxad::Config ;
 use strict ;
 use warnings ;
 use Readonly ;
-use version ; our $VERSION = qv('0.0.5') ;
+use version ; our $VERSION = qv('0.0.6') ;
 
 Readonly my $ERRORS                     => "errors" ;
 Readonly my $SECTIONS                   => "sections" ;
@@ -602,7 +602,7 @@ sub process_file {
         # see if it is a continuation line
 
         my $continu = 0 ;      # assume not a continuation line
-        if ( $line =~ /\\$/ ) {
+        if ( $line =~ /[^\\]\\$/ ) {
             dprint( "Got a continuation line on line $line_num in $file" ) ;
             # strip off continuation char but NOT any whitespace
             $line =~ s/\\$// ;
@@ -781,8 +781,6 @@ sub process_file {
                 # now put any dual backslashes back - but only one
                 $value =~ s/$HIDE_BACKSLASH/\\/g ;     
 
-                dprint( "Pushing ARRAY value \'$value\' to keyword \'$keyword\'" ) ;
-
                 # create the empty anonymous array if it doesn't exist
                 my $ref = $self->{ $SECTIONS }->{ $section }->{ $keyword } ;
                 if ( ! defined( $ref )) {
@@ -810,6 +808,8 @@ sub process_file {
 
                 # now save the value
 
+                dprint( "Pushing ARRAY value \'$value\' to keyword \'$keyword\'" ) ;
+
                 $ref = $self->{ $SECTIONS }->{ $section }->{ $keyword } ;
                 push( @{$ref}, $value ) ;
             }
@@ -823,8 +823,6 @@ sub process_file {
 
                 # now put any dual backslashes back - but only one
                 $value =~ s/$HIDE_BACKSLASH/\\/g ;     
-
-                dprint( "Pushing HASH value \'$value\' to keyword \'$keyword\'" ) ;
 
                 # create the empty anonymous hash if it doesn't exist
                 my $ref = $self->{ $SECTIONS }->{ $section }->{ $keyword } ;
@@ -867,6 +865,8 @@ sub process_file {
                 }
 
                 # now save the value
+
+                dprint( "Pushing HASH value \'$real_value\' to keyword \'$keyword\'" ) ;
 
                 $ref = $self->{ $SECTIONS }->{ $section }->{ $keyword } ;
                 ${$ref}{ $real_keyword} = $real_value ;
@@ -946,7 +946,7 @@ sub process_defs_file {
         # see if it is a continuation line
 
         my $continu = 0 ;      # assume not a continuation line
-        if ( $line =~ /\\$/ ) {
+        if ( $line =~ /[^\\]\\$/ ) {
             dprint( "Got a continuation line on line $line_num in $defs_file" ) ;
             # strip off continuation char but NOT any whitespace
             $line =~ s/\\$// ;
@@ -1027,8 +1027,8 @@ sub process_defs_file {
             # if the user escapes a comma or backslash to have it part
             # of the data, then hide it for now
 
-            $values =~ s/\\,/$HIDE_SEPARATOR/eg ;
             $values =~ s/\\\\/$HIDE_BACKSLASH/eg ;
+            $values =~ s/\\,/$HIDE_SEPARATOR/eg ;
 
             my @values = split( /,/, $values ) ;
             foreach my $value ( @values ) {
@@ -1038,7 +1038,6 @@ sub process_defs_file {
                 # now put any dual backslashes back - but only one
                 $value =~ s/$HIDE_BACKSLASH/\\/g ;     
 
-                dprint( "Pushing ARRAY value \'$value\' to keyword \'$keyword\'" ) ;
                 # create the empty anonymous array if it doesn't exist
                 my $ref = $self->{ $DEFS_ALLOWED }->{ $current_section }->{ $current_keyword } ;
                 if ( ! defined( $ref )) {
@@ -1055,6 +1054,8 @@ sub process_defs_file {
                 $value = $1 if ( $value =~ /^\'(.*)\'$/ ) ;
 
                 # now save the value
+
+                dprint( "Pushing ARRAY value \'$value\' to keyword \'$keyword\'" ) ;
 
                 $ref = $self->{ $DEFS_ALLOWED }->{ $current_section }->{ $current_keyword } ;
                 push( @{$ref}, $value ) ;
