@@ -36,3 +36,8 @@
       non-continued line
     - rearranged some debug statements to see values properly after
       handling leading and trailing whitespace and quoting of values
+
+0.0.7       Nov 3, 2017
+    - allow dots in keywords
+    - test if defs_file defined before testing for filename
+    - fixed example in config file in README.md

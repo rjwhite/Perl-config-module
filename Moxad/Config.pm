@@ -119,7 +119,7 @@ package Moxad::Config ;
 use strict ;
 use warnings ;
 use Readonly ;
-use version ; our $VERSION = qv('0.0.6') ;
+use version ; our $VERSION = qv('0.0.7') ;
 
 Readonly my $ERRORS                     => "errors" ;
 Readonly my $SECTIONS                   => "sections" ;
