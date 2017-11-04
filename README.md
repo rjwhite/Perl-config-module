@@ -76,7 +76,7 @@ To see documentation, do a ***perldoc Moxad::Config.pm***
      keyword                = section-name1:keyword1
      type                   = array
      separator              = ;
-     allowed-values         = val1, val2, val3 \
+     allowed-values         = val1, val2, val3, \
                               'val 4   '
 
      # this keyword2 will apply to all sections

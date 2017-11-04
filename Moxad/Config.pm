@@ -539,7 +539,7 @@ sub process_file {
     # It should only be non-empty on the top-level call to here
     # and not recursive calls made below
 
-    if ( $defs_file ne "" ) {
+    if ( defined( $defs_file ) and ( $defs_file ne "" )) {
         my $ret = process_defs_file( $self, $defs_file ) ;
         return( $ret ) if ( $ret ) ;
     }
@@ -621,7 +621,7 @@ sub process_file {
         # we now have everything we want on one line
         # separate out into the keyword and value(s)
 
-        if ( $line !~ /^([\w\-\(\)\s)]+)    # keyword
+        if ( $line !~ /^([\w\-\.\(\)\s)]+)    # keyword
                          \s*=\s*            # =
                          (.*)               # value
                          $/x ) {            # end of line
