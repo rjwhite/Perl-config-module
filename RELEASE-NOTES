@@ -12,7 +12,7 @@
     - added clear_errors() function
     - added more perldoc info (error functions)
     - added error routines to README.md
-    - added t subdirectory and test.t test program
+    - added to subdirectory and test.t test program
     - removed .gitignore (which contained Makefile)
     - added 'test' target in Makefile
 
@@ -41,3 +41,8 @@
     - allow dots in keywords
     - test if defs_file defined before testing for filename
     - fixed example in config file in README.md
+
+0.0.8       Mar 21, 2019
+    - now returns the keywords for a section in the order 
+      they were found in the config file in get_keywords()
+

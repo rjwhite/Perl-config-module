@@ -119,13 +119,14 @@ package Moxad::Config ;
 use strict ;
 use warnings ;
 use Readonly ;
-use version ; our $VERSION = qv('0.0.7') ;
+use version ; our $VERSION = qv('0.0.8') ;
 
 Readonly my $ERRORS                     => "errors" ;
 Readonly my $SECTIONS                   => "sections" ;
 Readonly my $CURRENT_SECTION            => "section-name" ;
 Readonly my $VALUE_TYPES                => "value_types" ;
 Readonly my $ORDERED_SECTION_NAMES      => "section-names" ;
+Readonly my $ORDERED_KEYWORD_NAMES      => "keyword-names" ;
 Readonly my $CONFIG_FILENAME            => "file" ;
 Readonly my $DEFS_FILENAME              => "defsfile" ;
 
@@ -176,7 +177,7 @@ sub new {
     my %instance = () ;
 
     $instance{ $ERRORS }                    = [] ;      # array of errors
-    $instance{ $ORDERED_SECTION_NAMES }     = [] ;      # section names
+    $instance{ $ORDERED_SECTION_NAMES }     = [] ;      # ordered section names
     $instance{ $SECTIONS }                  = {} ;      # our values
     $instance{ $VALUE_TYPES }               = {} ;      # types of our values
     $instance{ $CURRENT_SECTION }           = "none" ;  # current section name
@@ -344,7 +345,7 @@ sub get_keywords {
         return( @keywords ) ;   # empty list
     }
 
-    foreach my $keyword ( keys( %{ $self->{ $SECTIONS }->{ $section }} )) {
+    foreach my $keyword ( @{$self->{ $ORDERED_KEYWORD_NAMES }->{ $section }} ) {
         push( @keywords, $keyword ) ;
     }
     return( @keywords ) ;
@@ -589,7 +590,8 @@ sub process_file {
             # array of section names.  get_sections() will use this.
 
             if ( not defined( $self->{ $SECTIONS }->{ $section } )) {
-                push( @$self{ $ORDERED_SECTION_NAMES }, $line ) ;
+                push( @$self{ $ORDERED_SECTION_NAMES }, $section ) ;
+                $self->{ $ORDERED_KEYWORD_NAMES }{ $section } = [] ;
             }
 
             next ;
@@ -767,7 +769,7 @@ sub process_file {
             }
 
             $self->{ $SECTIONS }->{ $section }->{ $keyword } = $values ;
-
+            push( @$self{ $ORDERED_KEYWORD_NAMES }->{ $section }, $keyword ) ;
         } elsif ( $value_type eq $TYPE_ARRAY ) {
             # A array.  # Just append it.
             # Don't check to see if a same value is already there.
@@ -813,6 +815,7 @@ sub process_file {
                 $ref = $self->{ $SECTIONS }->{ $section }->{ $keyword } ;
                 push( @{$ref}, $value ) ;
             }
+            push( @$self{ $ORDERED_KEYWORD_NAMES }->{ $section }, $keyword ) ;
         } elsif ( $value_type eq $TYPE_HASH ) {
             # A hash
 
@@ -871,6 +874,7 @@ sub process_file {
                 $ref = $self->{ $SECTIONS }->{ $section }->{ $keyword } ;
                 ${$ref}{ $real_keyword} = $real_value ;
             }
+            push( @$self{ $ORDERED_KEYWORD_NAMES }->{ $section }, $keyword ) ;
         }
 
         # set a value type
