@@ -119,7 +119,7 @@ package Moxad::Config ;
 use strict ;
 use warnings ;
 use Readonly ;
-use version ; our $VERSION = qv('0.0.8') ;
+use version ; our $VERSION = qv('0.0.9') ;
 
 Readonly my $ERRORS                     => "errors" ;
 Readonly my $SECTIONS                   => "sections" ;
@@ -337,7 +337,7 @@ sub get_keywords {
     my @keywords = () ;
     if (( not defined( $section )) or ( $section eq "" )) {
         my $error = "get_keywords(): No section name given" ;
-        push( @$self{ $ERRORS }, $error ) ;
+        push( @{$self->{ $ERRORS }}, $error ) ;
         return( @keywords ) ;
     }
 
@@ -383,7 +383,7 @@ sub get_type {
         my $arg = $args{ $thing } ;
         if ( not defined( $arg )) {
             my $error = "get_type(): No $thing given" ;
-            push( @$self{ $ERRORS }, $error ) ;
+            push( @{$self->{ $ERRORS }}, $error ) ;
             return( $type ) ;
         }
     }
@@ -434,7 +434,7 @@ sub get_values {
         my $arg = $args{ $thing } ;
         if ( not defined( $arg )) {
             my $error = "get_values(): No $thing given" ;
-            push( @$self{ $ERRORS }, $error ) ;
+            push( @{$self->{ $ERRORS }}, $error ) ;
             return( $type ) ;
         }
     }
@@ -442,7 +442,7 @@ sub get_values {
     $type = $self->{ $VALUE_TYPES }{ $section }{ $keyword } ;
     if ( not defined( $type )) {
         my $error = "No value found for section \'$section\' keyword \'$keyword\'" ;
-        push( @$self{ $ERRORS }, $error ) ;
+        push( @{$self->{ $ERRORS }}, $error ) ;
         return( undef ) ;
     }
 
@@ -454,7 +454,7 @@ sub get_values {
         return( %{$self->{ $SECTIONS }{ $section }{ $keyword }} ) ;
     } else {
         my $error = "Unknown type for section \'$section\' keyword \'$keyword\'" ;
-        push( @$self{ $ERRORS }, $error ) ;
+        push( @{$self->{ $ERRORS }}, $error ) ;
         return( undef ) ;       # cant happen
     }
 }
@@ -525,14 +525,14 @@ sub process_file {
 
     if (( not defined( $file )) or ( $file eq "" )) {
         my $error = "No file given" ;
-        push( @$self{ $ERRORS }, $error ) ;
+        push( @{$self->{ $ERRORS }}, $error ) ;
         return(1) ;
     }
     dprint( "Processing file: $file" ) ;
 
     if ( ! -f $file ) {
         my $error = "No such file: $file" ;
-        push( @$self{ $ERRORS }, $error ) ;
+        push( @{$self->{ $ERRORS }}, $error ) ;
         return(1) ;
     }
 
@@ -548,7 +548,7 @@ sub process_file {
     my $fd ;
     if ( ! open( $fd, "<", $file )) {
         my $error = "Can\'t open: $file" ;
-        push( @$self{ $ERRORS }, $error ) ;
+        push( @{$self->{ $ERRORS }}, $error ) ;
         return(1) ;
     }
 
@@ -590,7 +590,7 @@ sub process_file {
             # array of section names.  get_sections() will use this.
 
             if ( not defined( $self->{ $SECTIONS }->{ $section } )) {
-                push( @$self{ $ORDERED_SECTION_NAMES }, $section ) ;
+                push( @{$self->{ $ORDERED_SECTION_NAMES }}, $section ) ;
                 $self->{ $ORDERED_KEYWORD_NAMES }{ $section } = [] ;
             }
 
@@ -629,7 +629,7 @@ sub process_file {
                          $/x ) {            # end of line
             my $error = "Not a valid keyword entry on line $line_num " .
                 "in $file: \'$line\'" ;
-            push( @$self{ $ERRORS }, $error ) ;
+            push( @{$self->{ $ERRORS }}, $error ) ;
             $num_errs++ ;
             next ;
         }
@@ -668,7 +668,7 @@ sub process_file {
             } else {
                 my $error = "Invalid type ($type) on line $line_num " .
                     "in $file" ;
-                push( @$self{ $ERRORS }, $error ) ;
+                push( @{$self->{ $ERRORS }}, $error ) ;
                 $num_errs++ ;
                 next ;
             }
@@ -688,7 +688,7 @@ sub process_file {
             if ( not defined( $k )) {
                 my $error = "keyword ($keyword) not allowed, found " .
                     "on line $line_num in $file" ;
-                push( @$self{ $ERRORS }, $error ) ;
+                push( @{$self->{ $ERRORS }}, $error ) ;
                 $num_errs++ ;
                 next ;
             }
@@ -713,7 +713,7 @@ sub process_file {
                 "match type given in config file ($value_type) for section " .
                 "\'$section\', keyword \'$keyword\' on line " .
                 "$line_num in $file" ;
-            push( @$self{ $ERRORS }, $error ) ;
+            push( @{$self->{ $ERRORS }}, $error ) ;
             $num_errs++ ;
             next ;
         }
@@ -763,13 +763,13 @@ sub process_file {
             if ( ! value_allowed( $self, $section, $keyword, $values )) {
                 my $error = "Value (\'$values\') not allowed for keyword " .
                     "\'$keyword\' on line $line_num in $file" ;
-                push( @$self{ $ERRORS }, $error ) ;
+                push( @{$self->{ $ERRORS }}, $error ) ;
                 $num_errs++ ;
                 next ;
             }
 
             $self->{ $SECTIONS }->{ $section }->{ $keyword } = $values ;
-            push( @$self{ $ORDERED_KEYWORD_NAMES }->{ $section }, $keyword ) ;
+            push( @{$self->{ $ORDERED_KEYWORD_NAMES }->{ $section }}, $keyword ) ;
         } elsif ( $value_type eq $TYPE_ARRAY ) {
             # A array.  # Just append it.
             # Don't check to see if a same value is already there.
@@ -777,7 +777,7 @@ sub process_file {
 
             my @values = split( /${separator}/, $values ) ;
             foreach my $value ( @values ) {
-                # put any commas back but without the backslashe
+                # put any commas back but without the backslashes
                 $value =~ s/$HIDE_SEPARATOR/${separator}/g ;     
 
                 # now put any dual backslashes back - but only one
@@ -803,7 +803,7 @@ sub process_file {
                 if ( ! value_allowed( $self, $section, $keyword, $value )) {
                     my $error = "Value (\'$value\') not allowed for keyword " .
                         "\'$keyword\' on line $line_num in $file" ;
-                    push( @$self{ $ERRORS }, $error ) ;
+                    push( @{$self->{ $ERRORS }}, $error ) ;
                     $num_errs++ ;
                     next ;
                 }
@@ -815,7 +815,7 @@ sub process_file {
                 $ref = $self->{ $SECTIONS }->{ $section }->{ $keyword } ;
                 push( @{$ref}, $value ) ;
             }
-            push( @$self{ $ORDERED_KEYWORD_NAMES }->{ $section }, $keyword ) ;
+            push( @{$self->{ $ORDERED_KEYWORD_NAMES }->{ $section }}, $keyword ) ;
         } elsif ( $value_type eq $TYPE_HASH ) {
             # A hash
 
@@ -847,7 +847,7 @@ sub process_file {
                 } else {
                     my $error = "Invalid hash given ($value) on line " .
                         "$line_num in $file" ;
-                    push( @$self{ $ERRORS }, $error ) ;
+                    push( @{$self->{ $ERRORS }}, $error ) ;
                     $num_errs++ ;
                     next ;
                 }
@@ -862,7 +862,7 @@ sub process_file {
                 if ( ! value_allowed( $self, $section, $keyword, $real_value )) {
                     my $error = "Value (\'$real_value\') not allowed for keyword " .
                         "\'$keyword\' on line $line_num in $file" ;
-                    push( @$self{ $ERRORS }, $error ) ;
+                    push( @{$self->{ $ERRORS }}, $error ) ;
                     $num_errs++ ;
                     next ;
                 }
@@ -874,7 +874,7 @@ sub process_file {
                 $ref = $self->{ $SECTIONS }->{ $section }->{ $keyword } ;
                 ${$ref}{ $real_keyword} = $real_value ;
             }
-            push( @$self{ $ORDERED_KEYWORD_NAMES }->{ $section }, $keyword ) ;
+            push( @{$self->{ $ORDERED_KEYWORD_NAMES }->{ $section }}, $keyword ) ;
         }
 
         # set a value type
@@ -921,14 +921,14 @@ sub process_defs_file {
 
     if ( ! -f $defs_file ) {
         my $error = "No such definitions file: $defs_file" ;
-        push( @$self{ $ERRORS }, $error ) ;
+        push( @{$self->{ $ERRORS }}, $error ) ;
         return(1) ;
     }
 
     my $fd ;
     if ( ! open( $fd, "<", $defs_file )) {
         my $error = "Can\'t open: $defs_file" ;
-        push( @$self{ $ERRORS }, $error ) ;
+        push( @{$self->{ $ERRORS }}, $error ) ;
         return(1) ;
     }
 
@@ -975,7 +975,7 @@ sub process_defs_file {
                         $/x ) {         # end of line
             my $error = "Not a valid keyword entry on line $line_num " .
                 "in $defs_file: \'$line\'" ;
-            push( @$self{ $ERRORS }, $error ) ;
+            push( @{$self->{ $ERRORS }}, $error ) ;
             return(1) ;
         }
         my $keyword = $1 ;
@@ -1011,7 +1011,7 @@ sub process_defs_file {
             if ( not defined( $valid_types{ $type } )) {
                 my $error = "Invalid type ($type) on line $line_num " .
                     "in $defs_file" ;
-                push( @$self{ $ERRORS }, $error ) ;
+                push( @{$self->{ $ERRORS }}, $error ) ;
                 close $fd ;
                 return(1) ;
             }
@@ -1068,7 +1068,7 @@ sub process_defs_file {
         } else {
             my $error = "Not a valid keyword (\'$keyword\') on " .
                 "line $line_num in $defs_file: \'$line\'" ;
-            push( @$self{ $ERRORS }, $error ) ;
+            push( @{$self->{ $ERRORS }}, $error ) ;
             return(1) ;
         }
         

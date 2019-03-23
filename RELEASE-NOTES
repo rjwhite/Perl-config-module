@@ -46,3 +46,11 @@
     - now returns the keywords for a section in the order 
       they were found in the config file in get_keywords()
 
+0.0.9       Mar 22, 2019
+    - fixed many statements that caused errors such as:
+            "Experimental push on scalar is now forbidden..."
+      when using statements like:
+            push( @$self{ $ERRORS }, $error ) ;
+      instead of:
+            push( @{$self->{ $ERRORS }}, $error ) ;
+      in Perl version v5.26.1
